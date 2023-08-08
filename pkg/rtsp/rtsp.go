@@ -14,16 +14,6 @@ const (
 	StatusNotFound     = 404
 )
 
-func DescribeMsg(url string, seq int, ua string) string {
-	msgRet := "DESCRIBE " + url + " RTSP/1.0\r\n"
-	msgRet += "CSeq: " + strconv.Itoa(seq) + "\r\n"
-	if ua != "" {
-		msgRet += "User-Agent: " + ua + "\r\n"
-	}
-	msgRet += "\r\n"
-	return msgRet
-}
-
 func (r *Runner) Handler(serv Service) (status int, err error) {
 	addr := fmt.Sprintf("%v:%v", serv.IP, serv.Port)
 	conn, err := net.DialTimeout("tcp", addr, r.options.Timeout)
@@ -37,7 +27,7 @@ func (r *Runner) Handler(serv Service) (status int, err error) {
 	seq := 1
 	data := make([]byte, 255)
 	seq += 1
-	msg := DescribeMsg(serv.URL, seq, r.options.UserAgent)
+	msg := describeMsg(serv.URL, seq, r.options.UserAgent)
 	_, err = conn.Write([]byte(msg))
 	if err != nil {
 		return
@@ -59,4 +49,14 @@ func (r *Runner) Handler(serv Service) (status int, err error) {
 		return
 	}
 	return
+}
+
+func describeMsg(url string, seq int, ua string) string {
+	msgRet := "DESCRIBE " + url + " RTSP/1.0\r\n"
+	msgRet += "CSeq: " + strconv.Itoa(seq) + "\r\n"
+	if ua != "" {
+		msgRet += "User-Agent: " + ua + "\r\n"
+	}
+	msgRet += "\r\n"
+	return msgRet
 }
