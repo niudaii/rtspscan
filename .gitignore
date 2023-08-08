@@ -1,0 +1,6 @@
+.DS_Store
+.idea/
+example/
+output.txt
+input.txt
+*_test.go

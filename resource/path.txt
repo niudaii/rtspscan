@@ -1,0 +1,10 @@
+/Streaming/Channels/1
+/Streaming/Channels/101
+/h264/ch1/main/av_stream
+/cam/realmonitor?channel=1&subtype=0
+/axis-media/media.amp
+/mpeg4/media.amp
+/live2.sdp
+/medias1
+/live
+/live2
