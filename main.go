@@ -1,10 +1,11 @@
 package main
 
 import (
-	"rtspscan/internal/cmd"
-	"rtspscan/pkg/rtsp"
 	"strings"
 	"time"
+
+	"github.com/niudaii/rtspscan/internal/cmd"
+	"github.com/niudaii/rtspscan/pkg/rtsp"
 
 	"github.com/charmbracelet/log"
 	"github.com/niudaii/util/files"
