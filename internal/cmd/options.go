@@ -27,7 +27,7 @@ type Options struct {
 	PassList  []string
 }
 
-func InitOptions(options *Options) (err error) {
+func initOptions(options *Options) (err error) {
 	flag.StringVar(&options.Input, "i", "", "The input")
 	flag.StringVar(&options.InputFile, "f", "", "The input file")
 	flag.StringVar(&options.OutputFile, "o", "output.txt", "The output file")
