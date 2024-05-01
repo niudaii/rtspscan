@@ -56,10 +56,12 @@ func (r *Runner) Run(targets []IPAddr) (results []string) {
 				if err != nil {
 					log.Debug(err.Error())
 				} else {
-					log.Printf("[+] %v", result.URL)
-					rwMutex.Lock()
-					results = append(results, result.URL)
-					rwMutex.Unlock()
+					if result.URL != "" {
+						log.Printf("[+] %v", result.URL)
+						rwMutex.Lock()
+						results = append(results, result.URL)
+						rwMutex.Unlock()
+					}
 				}
 				wg.Done()
 			}
