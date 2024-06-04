@@ -20,6 +20,7 @@ func Run() {
 		UserAgent: options.UserAgent,
 		Threads:   options.Threads,
 		Timeout:   time.Duration(options.Timeout) * time.Second,
+		Proxy:     options.Proxy,
 		PathList:  options.PathList,
 		UserList:  options.UserList,
 		PassList:  options.PassList,

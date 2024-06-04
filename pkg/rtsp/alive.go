@@ -2,7 +2,7 @@ package rtsp
 
 import (
 	"fmt"
-	"net"
+	"github.com/zp857/goutil/networkx"
 	"strings"
 	"sync"
 
@@ -58,6 +58,6 @@ func (r *Runner) CheckAlive(targets []string) (results []IPAddr) {
 }
 
 func (r *Runner) conn(ipAddr IPAddr) bool {
-	_, err := net.DialTimeout("tcp", fmt.Sprintf("%v:%v", ipAddr.IP, ipAddr.Port), r.options.Timeout)
+	_, err := networkx.NewConn(fmt.Sprintf("%v:%v", ipAddr.IP, ipAddr.Port), r.options.Proxy, r.options.Timeout)
 	return err == nil
 }

@@ -2,21 +2,23 @@ package rtsp
 
 import (
 	"fmt"
+	"github.com/zp857/goutil/networkx"
+	"net"
 	"sync"
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/niudaii/util"
 )
 
 type Options struct {
 	UserAgent string
 	Threads   int
-	Timeout   time.Duration
 	PathList  []string
 	UserList  []string
 	PassList  []string
+	Proxy     string
+	Timeout   time.Duration
 }
 
 type Runner struct {
@@ -56,30 +58,35 @@ func (r *Runner) Run(targets []IPAddr) (results []string) {
 				if err != nil {
 					log.Debug(err.Error())
 				} else {
-					log.Printf("[+] %v", result.URL)
-					rwMutex.Lock()
-					results = append(results, result.URL)
-					rwMutex.Unlock()
+					if result.URL != "" {
+						log.Printf("[+] %v", result.URL)
+						rwMutex.Lock()
+						results = append(results, result.URL)
+						rwMutex.Unlock()
+					}
 				}
 				wg.Done()
 			}
 		}()
 	}
 
-	bar := pb.StartNew(len(tasks))
 	for _, task := range tasks {
-		bar.Increment()
 		wg.Add(1)
 		taskChan <- task
 	}
 	close(taskChan)
 	wg.Wait()
-	bar.Finish()
 
 	return
 }
 
 func (r *Runner) Scan(serv Service) (result Service, err error) {
+	addr := fmt.Sprintf("%v:%v", serv.IP, serv.Port)
+	var conn net.Conn
+	conn, err = networkx.NewConn(addr, r.options.Proxy, r.options.Timeout)
+	if err != nil {
+		return
+	}
 	r.options.PathList = append([]string{""}, r.options.PathList...)
 	r.options.PathList = util.RemoveDuplicate(r.options.PathList)
 	// check path
@@ -87,7 +94,7 @@ func (r *Runner) Scan(serv Service) (result Service, err error) {
 	for _, path := range r.options.PathList {
 		serv.Path = path
 		serv.URL = fmt.Sprintf("rtsp://%v:%v%v", serv.IP, serv.Port, path)
-		status, err = r.Handler(serv)
+		status, err = r.Handler(conn, serv)
 		if err != nil {
 			return
 		}
@@ -110,7 +117,7 @@ func (r *Runner) Scan(serv Service) (result Service, err error) {
 	for _, user := range r.options.UserList {
 		for _, pass := range r.options.PassList {
 			serv.URL = fmt.Sprintf("rtsp://%v:%v@%v:%v%v", user, pass, serv.IP, serv.Port, serv.Path)
-			status, err = r.Handler(serv)
+			status, err = r.Handler(conn, serv)
 			if err != nil {
 				return
 			}

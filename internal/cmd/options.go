@@ -19,6 +19,7 @@ type Options struct {
 	PathFile   string
 	Threads    int
 	Timeout    int
+	Proxy      string
 	Debug      bool
 
 	InputList []string
@@ -37,6 +38,7 @@ func initOptions(options *Options) (err error) {
 	flag.StringVar(&options.PassFile, "pass-file", "resource/pass.txt", "The pass file")
 	flag.IntVar(&options.Threads, "t", 100, "Thread num")
 	flag.IntVar(&options.Timeout, "timeout", 5, "Timeout in seconds")
+	flag.StringVar(&options.Proxy, "proxy", "", "socks5 proxy")
 	flag.BoolVar(&options.Debug, "debug", false, "Enable debug mode")
 	flag.Parse()
 

@@ -1,11 +1,9 @@
 package rtsp
 
 import (
-	"fmt"
 	"net"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const (
@@ -14,15 +12,7 @@ const (
 	StatusNotFound     = 404
 )
 
-func (r *Runner) Handler(serv Service) (status int, err error) {
-	addr := fmt.Sprintf("%v:%v", serv.IP, serv.Port)
-	conn, err := net.DialTimeout("tcp", addr, r.options.Timeout)
-	if err != nil {
-		return
-	}
-	_ = conn.SetReadDeadline(time.Now().Add(r.options.Timeout))
-	_ = conn.SetWriteDeadline(time.Now().Add(r.options.Timeout))
-
+func (r *Runner) Handler(conn net.Conn, serv Service) (status int, err error) {
 	// just omit OPTIONS, send DESCRIBE
 	seq := 1
 	data := make([]byte, 255)
